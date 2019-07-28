@@ -23,6 +23,14 @@
         align-items: center;
         font-size: 50px;
       }
+      #gameOver > div {
+        display: flex;
+        height: 100px;
+        width: 100%;
+        justify-content: center;
+        align-items: center;
+        font-size: 50px;
+      }
       
     </style>
   </head>
@@ -32,7 +40,9 @@
         <!--render method propagates here-->
       </div>
     </div>
-
+    <div id="gameOver">
+    </div>
+    
     <script>
       let currentPlayer = "X";
       const marks = ["", "", "", "", "", "", "", "", ""];
@@ -42,31 +52,42 @@
         [0,4,8],[2,4,6]          //diagonal wins
       ]
       const grid = document.getElementById("grid");
-      const victor = "";
+      const gameOver = document.getElementById("gameOver");
+      let victor = "";
 
       const render = () => {
         const renderMarks = marks.map((mark, idx) => {
           return `<div> ${mark} </div>`
         }).join("");
         grid.innerHTML = renderMarks;
-
-        grid.childNodes.forEach((box, pos) => {
-          box.addEventListener("click", ev => {
-            if (marks[pos] === "") {
-              marks.splice(pos, 1, currentPlayer);
-              const winEval = [];
-              marks.forEach((mark, idx) => {
-                mark === currentPlayer ? winEval.push(idx) : null;
-              })
-              console.log(winEval);
-              currentPlayer === "X" ? currentPlayer = "O" : currentPlayer = "X";
-            }
-            render();
+        
+        if (!victor) {
+          grid.childNodes.forEach((box, pos) => {
+            box.addEventListener("click", ev => {
+              if (marks[pos] === "") {
+                marks.splice(pos, 1, currentPlayer);
+                const winEval = [];
+                marks.forEach((mark, idx) => {
+                  mark === currentPlayer ? winEval.push(idx) : null;
+                })
+                winSeqs.forEach(seq => {
+                  let fullWinSeq = 0
+                  seq.forEach(mark => {
+                    winEval.includes(mark) ? fullWinSeq ++ : null;
+                  })
+                  fullWinSeq === 3 ? victor = currentPlayer : null;
+                })
+                currentPlayer === "X" ? currentPlayer = "O" : currentPlayer = "X";
+              }
+              render();
+              victor ? gameOver.innerHTML = `<div>${victor} wins!</div>` : null;
+              marks.includes("") ? null : gameOver.innerHTML = `<div>It's a tie</div>`;
+            })
           })
-        })
+        };
       };
+      
       render();
-      console.log(victor);
     </script>
   </body>
 </html>

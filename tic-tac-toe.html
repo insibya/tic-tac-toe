@@ -37,11 +37,12 @@
       let currentPlayer = "X";
       const marks = ["", "", "", "", "", "", "", "", ""];
       const winSeqs = [
-        [1,2,3],[4,5,6],[7,8,9], //horizontal wins
-        [1,4,7],[2,5,8],[3,6,9], //vertical wins
-        [1,5,9],[3,5,7]]         //diagonal wins
-
+        [0,1,2],[3,4,5],[6,7,8], //horizontal wins
+        [0,3,6],[1,4,7],[2,5,8], //vertical wins
+        [0,4,8],[2,4,6]          //diagonal wins
+      ]
       const grid = document.getElementById("grid");
+      const victor = "";
 
       const render = () => {
         const renderMarks = marks.map((mark, idx) => {
@@ -51,14 +52,21 @@
 
         grid.childNodes.forEach((box, pos) => {
           box.addEventListener("click", ev => {
-            marks[pos] === "" ? marks.splice(pos, 1, currentPlayer) : null;
-            currentPlayer === "X" ? currentPlayer = "O" : currentPlayer = "X";
+            if (marks[pos] === "") {
+              marks.splice(pos, 1, currentPlayer);
+              const winEval = [];
+              marks.forEach((mark, idx) => {
+                mark === currentPlayer ? winEval.push(idx) : null;
+              })
+              console.log(winEval);
+              currentPlayer === "X" ? currentPlayer = "O" : currentPlayer = "X";
+            }
             render();
           })
         })
       };
-      
       render();
+      console.log(victor);
     </script>
   </body>
 </html>
